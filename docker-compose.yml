@@ -1,0 +1,66 @@
+services:
+
+  mongodb:
+    image: mongo:8
+    container_name: taskhub-mongodb
+    restart: unless-stopped
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+
+    volumes:
+      - mongodb_data:/data/db
+
+    networks:
+      - taskhub
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: taskhub-backend
+
+    restart: unless-stopped
+
+    depends_on:
+      - mongodb
+
+    environment:
+      PORT: 3000
+      MONGODB_URI: mongodb://admin:password123@mongodb:27017/taskhub?authSource=admin
+      JWT_SECRET: change-me
+
+    ports:
+      - "3001:3000"
+
+    networks:
+      - taskhub
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: taskhub-frontend
+
+    restart: unless-stopped
+
+    depends_on:
+      - backend
+
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:3000
+
+    ports:
+      - "3000:3000"
+
+    networks:
+      - taskhub
+
+networks:
+  taskhub:
+
+volumes:
+  mongodb_data:
