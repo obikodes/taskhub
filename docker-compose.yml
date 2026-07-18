@@ -22,6 +22,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    image: obicauka/taskhub-backend:1.1
 
     container_name: taskhub-backend
 
@@ -45,6 +46,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    image: obicauka/taskhub-frontend:1.1
 
     container_name: taskhub-frontend
 
